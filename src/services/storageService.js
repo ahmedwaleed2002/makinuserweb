@@ -16,7 +16,7 @@ export const storageService = {
       
       // Handle rate limit errors
       if (error.message.includes('Rate limit') || error.code === 429) {
-        return { success: false, error: 'Upload rate limit exceeded. Please wait a moment and try again.' };
+        return { success: false, error: 'Please wait a moment before uploading another file. (Rate limit)' };
       }
       
       return { success: false, error: error.message };

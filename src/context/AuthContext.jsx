@@ -62,7 +62,7 @@ export const AuthProvider = ({ children }) => {
         const user = await account.get();
 
         // Add small delay before fetching user document
-        await delay(500);
+        await delay(200); // Reduced from 500ms to 200ms
         
         // Fetch user document from database to check KYC status
         const userDoc = await userService.getUserByUserId(user.$id);
@@ -93,14 +93,14 @@ export const AuthProvider = ({ children }) => {
       } catch (error) {
         console.error('Login error:', error);
         
-        // Handle rate limit errors
+        // Handle rate limit errors with user-friendly message
         if (error.message.includes('Rate limit') || error.code === 429) {
-          throw error; // Let withRateLimit handle the retry
+          return { success: false, error: 'Please wait a moment before trying again. (Rate limit)' };
         }
         
         return { success: false, error: error.message };
       }
-    }, 2000);
+    }, 500, 'login'); // Reduced from 2000ms to 500ms, added operation type
   };
 
   const register = async (email, password, userData) => {
@@ -141,7 +141,7 @@ export const AuthProvider = ({ children }) => {
       
       // Handle rate limit errors
       if (error.message.includes('Rate limit') || error.code === 429) {
-        return { success: false, error: 'Too many requests. Please wait a moment and try again.' };
+        return { success: false, error: 'Please wait a moment before creating another account. (Rate limit)' };
       }
       
       return { success: false, error: error.message };

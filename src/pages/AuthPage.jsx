@@ -27,6 +27,7 @@ const [formData, setFormData] = useState({
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [rateLimitMessage, setRateLimitMessage] = useState('');
   const [profileImageFile, setProfileImageFile] = useState(null);
   const [profileImagePreview, setProfileImagePreview] = useState(null);
   const [kycFrontFile, setKycFrontFile] = useState(null);
@@ -107,6 +108,7 @@ const [formData, setFormData] = useState({
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setRateLimitMessage('');
     setLoading(true);
 
     try {
@@ -173,7 +175,11 @@ const [formData, setFormData] = useState({
         }
         navigate('/');
       } else {
-        setError(result.error);
+        if (result.error && result.error.includes('Rate limit')) {
+          setRateLimitMessage(result.error);
+        } else {
+          setError(result.error);
+        }
       }
     } catch (err) {
       setError('An unexpected error occurred');
@@ -430,6 +436,15 @@ const [formData, setFormData] = useState({
           {error && (
             <div className="bg-red-50 border border-red-200 rounded-lg p-3">
               <p className="text-sm text-red-600">{error}</p>
+            </div>
+          )}
+
+          {rateLimitMessage && (
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+              <div className="flex items-center space-x-2">
+                <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>
+                <p className="text-sm text-yellow-700">{rateLimitMessage}</p>
+              </div>
             </div>
           )}
 
