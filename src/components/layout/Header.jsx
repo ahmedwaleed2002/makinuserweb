@@ -39,16 +39,23 @@ const Header = () => {
                   <User className="h-5 w-5" />
                   <span>{user?.name || 'Profile'}</span>
                 </Link>
-                <Button variant="outline" size="sm" onClick={logout}>
+                <Button variant="outline" size="sm" onClick={() => logout()}>
                   Logout
                 </Button>
               </div>
             ) : (
-              <Link to="/auth">
-                <Button variant="primary" size="sm">
-                  Sign In
-                </Button>
-              </Link>
+              <div className="flex items-center space-x-3">
+                <Link to="/auth?mode=login">
+                  <Button variant="ghost" size="sm">
+                    Sign In
+                  </Button>
+                </Link>
+                <Link to="/auth?mode=register">
+                  <Button variant="primary" size="sm">
+                    Sign Up
+                  </Button>
+                </Link>
+              </div>
             )}
           </div>
         </div>
