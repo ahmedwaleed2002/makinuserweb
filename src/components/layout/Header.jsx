@@ -29,6 +29,9 @@ const Header = () => {
             <Link to="/components" className="text-gray-600 hover:text-makin-orange transition-colors">
               Components
             </Link>
+            <Link to="/map-demo" className="text-gray-600 hover:text-makin-orange transition-colors">
+              Map Demo
+            </Link>
           </nav>
 
           {/* Auth Section */}

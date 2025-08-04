@@ -9,6 +9,7 @@ import BookingPage from './pages/BookingPage.jsx';
 import AuthPage from './pages/AuthPage.jsx';
 import ProfilePage from './pages/ProfilePage.jsx';
 import ComponentLibrary from './pages/ComponentLibrary.jsx';
+import MapDemo from './pages/MapDemo.jsx';
 import { AuthProvider } from './context/AuthContext.jsx';
 import { BookingProvider } from './context/BookingContext.jsx';
 
@@ -28,6 +29,7 @@ function App() {
                 <Route path="/auth" element={<AuthPage />} />
                 <Route path="/profile" element={<ProfilePage />} />
                 <Route path="/components" element={<ComponentLibrary />} />
+                <Route path="/map-demo" element={<MapDemo />} />
               </Routes>
             </main>
             <Footer />

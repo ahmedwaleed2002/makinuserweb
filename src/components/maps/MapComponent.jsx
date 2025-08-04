@@ -1,5 +1,44 @@
-import React, { useEffect, useRef, useState } from 'react';
-import LoadingSpinner from '../ui/LoadingSpinner.jsx';
+import React, { useEffect } from 'react';
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
+
+// Fix for default markers in React-Leaflet
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
+  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+});
+
+// Custom orange marker icon for equipment locations
+const createCustomIcon = () => {
+  return L.divIcon({
+    html: `
+      <div style="
+        background-color: #ff6f03;
+        width: 25px;
+        height: 25px;
+        border-radius: 50%;
+        border: 3px solid white;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      ">
+        <div style="
+          background-color: white;
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+        "></div>
+      </div>
+    `,
+    className: 'custom-div-icon',
+    iconSize: [25, 25],
+    iconAnchor: [12, 25],
+  });
+};
 
 const MapComponent = ({
   center = { lat: 40.7128, lng: -74.0060 }, // Default to NYC
@@ -9,106 +48,75 @@ const MapComponent = ({
   height = '400px',
   className = ''
 }) => {
-  const mapRef = useRef(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    // Simulate Google Maps loading
-    // In a real implementation, you would load the Google Maps JavaScript API
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
-
-    return () => clearTimeout(timer);
-  }, []);
-
-  if (isLoading) {
-    return (
-      <div 
-        className={`relative bg-gray-100 rounded-lg overflow-hidden ${className}`}
-        style={{ height }}
-      >
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="text-center">
-            <LoadingSpinner size="lg" />
-            <p className="mt-2 text-gray-600">Loading map...</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div 
-        className={`relative bg-gray-100 rounded-lg overflow-hidden flex items-center justify-center ${className}`}
-        style={{ height }}
-      >
-        <div className="text-center text-gray-600">
-          <p>Unable to load map</p>
-          <p className="text-sm mt-1">{error}</p>
-        </div>
-      </div>
-    );
-  }
+  // Convert center object to array format for Leaflet
+  const mapCenter = [center.lat, center.lng];
+  
+  // Convert markers to Leaflet format
+  const leafletMarkers = markers.map(marker => ({
+    id: marker.id,
+    position: [marker.position.lat, marker.position.lng],
+    title: marker.title
+  }));
 
   return (
     <div 
-      ref={mapRef}
-      className={`relative bg-gray-200 rounded-lg overflow-hidden ${className}`}
-      style={{ height }}
+      className={`rounded-lg overflow-hidden ${className}`}
+      style={{ height, width: '100%' }}
     >
-      {/* Mock Map Interface */}
-      <div className="absolute inset-0 bg-gradient-to-br from-green-100 to-blue-100">
-        {/* Mock Streets */}
-        <div className="absolute top-1/4 left-0 right-0 h-1 bg-gray-400 opacity-60" />
-        <div className="absolute top-1/2 left-0 right-0 h-1 bg-gray-400 opacity-60" />
-        <div className="absolute top-3/4 left-0 right-0 h-1 bg-gray-400 opacity-60" />
-        <div className="absolute top-0 bottom-0 left-1/4 w-1 bg-gray-400 opacity-60" />
-        <div className="absolute top-0 bottom-0 left-1/2 w-1 bg-gray-400 opacity-60" />
-        <div className="absolute top-0 bottom-0 left-3/4 w-1 bg-gray-400 opacity-60" />
+      <MapContainer 
+        center={mapCenter} 
+        zoom={zoom} 
+        style={{ height: '100%', width: '100%' }}
+        scrollWheelZoom={true}
+      >
+        {/* OpenStreetMap tiles */}
+        <TileLayer
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        />
         
-        {/* Mock Markers */}
-        {markers.map((marker, index) => (
-          <div
-            key={marker.id}
-            className="absolute w-6 h-6 cursor-pointer transform -translate-x-1/2 -translate-y-1/2"
-            style={{
-              left: `${30 + (index * 15)}%`,
-              top: `${40 + (index * 10)}%`
-            }}
-            onClick={() => onMarkerClick?.(marker.id)}
-            title={marker.title}
-          >
-            <div className="w-6 h-6 bg-makin-orange rounded-full border-2 border-white shadow-lg flex items-center justify-center">
-              <div className="w-2 h-2 bg-white rounded-full" />
+        {/* Center marker */}
+        <Marker 
+          position={mapCenter}
+          icon={createCustomIcon()}
+        >
+          <Popup>
+            <div className="text-center">
+              <strong>Your Location</strong><br />
+              Heavy machinery rental center
             </div>
-          </div>
-        ))}
+          </Popup>
+        </Marker>
         
-        {/* Center Marker */}
-        <div className="absolute top-1/2 left-1/2 w-8 h-8 transform -translate-x-1/2 -translate-y-1/2">
-          <div className="w-8 h-8 bg-makin-deep-orange rounded-full border-3 border-white shadow-lg flex items-center justify-center">
-            <div className="w-3 h-3 bg-white rounded-full" />
-          </div>
-        </div>
-      </div>
-      
-      {/* Mock Google Maps Controls */}
-      <div className="absolute top-4 right-4 bg-white rounded-lg shadow-md">
-        <button className="p-2 hover:bg-gray-50 border-b border-gray-200">
-          <span className="text-lg font-bold text-gray-600">+</span>
-        </button>
-        <button className="p-2 hover:bg-gray-50">
-          <span className="text-lg font-bold text-gray-600">−</span>
-        </button>
-      </div>
-      
-      {/* Attribution */}
-      <div className="absolute bottom-2 left-2 text-xs text-gray-500 bg-white bg-opacity-75 px-2 py-1 rounded">
-        Mock Google Maps - Replace with actual API
-      </div>
+        {/* Equipment markers */}
+        {leafletMarkers.map((marker) => (
+          <Marker
+            key={marker.id}
+            position={marker.position}
+            icon={createCustomIcon()}
+            eventHandlers={{
+              click: () => {
+                if (onMarkerClick) {
+                  onMarkerClick(marker.id);
+                }
+              },
+            }}
+          >
+            <Popup>
+              <div className="text-center">
+                <strong>{marker.title}</strong><br />
+                <span className="text-sm text-gray-600">Equipment available here</span><br />
+                <button 
+                  className="mt-2 px-3 py-1 bg-orange-500 text-white rounded-md text-sm hover:bg-orange-600"
+                  onClick={() => onMarkerClick && onMarkerClick(marker.id)}
+                >
+                  View Details
+                </button>
+              </div>
+            </Popup>
+          </Marker>
+        ))}
+      </MapContainer>
     </div>
   );
 };

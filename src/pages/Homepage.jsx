@@ -7,19 +7,29 @@ const Homepage = () => {
     {
       id: '1',
       position: { lat: 40.7589, lng: -73.9851 },
-      title: 'Equipment Location 1'
+      title: 'CAT 320 Excavator - Times Square'
     },
     {
       id: '2',
       position: { lat: 40.7505, lng: -73.9934 },
-      title: 'Equipment Location 2'
+      title: 'John Deere Bulldozer - Brooklyn Bridge'
     },
     {
       id: '3',
       position: { lat: 40.7614, lng: -73.9776 },
-      title: 'Equipment Location 3'
+      title: 'Komatsu Crane - Central Park'
+    },
+    {
+      id: '4',
+      position: { lat: 40.7282, lng: -74.0776 },
+      title: 'Volvo Loader - Hudson Yards'
     }
   ];
+
+  const handleMarkerClick = (markerId) => {
+    console.log('Equipment marker clicked:', markerId);
+    // Navigate to equipment details or show more info
+  };
 
   return (
     <div className="relative min-h-screen">
@@ -29,6 +39,7 @@ const Homepage = () => {
           center={{ lat: 40.7128, lng: -74.0060 }}
           zoom={12}
           markers={mockMarkers}
+          onMarkerClick={handleMarkerClick}
           height="100vh"
           className="w-full"
         />
