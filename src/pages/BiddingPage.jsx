@@ -11,6 +11,9 @@ const BiddingPage = () => {
   const [bids, setBids] = useState([]);
   const [requestId, setRequestId] = useState(location.state?.requestId);
   const [requestData, setRequestData] = useState(null);
+  
+  // Get booking data from navigation state
+  const bookingData = location.state || {};
 
   // Fetch actual request data
   useEffect(() => {
@@ -133,7 +136,9 @@ const BiddingPage = () => {
               <button className="bg-gray-100 rounded-full px-4 py-2 text-gray-600">
                 -5
               </button>
-              <span className="text-3xl font-bold">{`PKR${requestData?.budgetRange || 'N/A'}`}</span>
+              <span className="text-3xl font-bold">
+                PKR{bookingData.recommendedPrice ? Math.ceil(bookingData.recommendedPrice) : (requestData?.budgetRange || 'N/A')}
+              </span>
               <button className="bg-gray-100 rounded-full px-4 py-2 text-gray-600">
                 +5
               </button>
@@ -147,17 +152,47 @@ const BiddingPage = () => {
           <div className="space-y-4 text-gray-600">
             <div className="flex items-center space-x-3">
               <MapPin className="w-5 h-5" />
-              <span>Pickup from current location</span>
+              <span>Location: {bookingData.location || 'Current location'}</span>
             </div>
             <div className="flex items-center space-x-3">
               <Clock className="w-5 h-5" />
-              <span>Estimated duration: {location.state?.duration || 'N/A'} days</span>
+              <span>Duration: {bookingData.duration || location.state?.duration || 'N/A'} days</span>
             </div>
             <div className="flex items-center space-x-3">
               <Users className="w-5 h-5" />
-              <span>Equipment: {location.state?.selectedCategory?.name || 'N/A'}</span>
+              <span>Equipment: {bookingData.selectedCategory?.name || location.state?.selectedCategory?.name || 'N/A'}</span>
             </div>
           </div>
+          
+          {/* Price Breakdown - Show if booking data is available */}
+          {bookingData.recommendedPrice && (
+            <div className="mt-6 p-4 bg-gradient-to-r from-makin-orange/10 to-orange-100 rounded-lg border border-makin-orange/20">
+              <h3 className="text-lg font-semibold text-makin-black mb-3">Price Breakdown</h3>
+              <div className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-600">Duration:</span>
+                  <span className="font-medium">{bookingData.duration} {bookingData.duration === 1 ? 'day' : 'days'}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-600">Vehicle:</span>
+                  <span className="font-medium">{bookingData.selectedCategory?.name}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-600">Rate:</span>
+                  <span className="font-medium">${bookingData.selectedCategory?.base_price_per_hour}/hour</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-600">Daily Rate:</span>
+                  <span className="font-medium">${bookingData.dailyRate?.toFixed(2)}/day</span>
+                </div>
+                <hr className="border-makin-orange/20" />
+                <div className="flex justify-between items-center text-lg">
+                  <span className="font-semibold text-makin-black">Total Price:</span>
+                  <span className="font-bold text-makin-orange">PKR{Math.ceil(bookingData.recommendedPrice)}</span>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Cancel Button */}
           <div className="fixed bottom-6 left-6 right-6">
