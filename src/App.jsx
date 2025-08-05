@@ -9,6 +9,10 @@ import BookingPage from './pages/BookingPage.jsx';
 import AuthPage from './pages/AuthPage.jsx';
 import ProfilePage from './pages/ProfilePage.jsx';
 import ComponentLibrary from './pages/ComponentLibrary.jsx';
+import VehicleCategoriesTest from './components/booking/VehicleCategoriesTest.jsx';
+import DatabaseTestPage from './pages/DatabaseTestPage.jsx';
+import BiddingPage from './pages/BiddingPage.jsx';
+import MapTestPage from './pages/MapTestPage.jsx';
 import { AuthProvider } from './context/AuthContext.jsx';
 import { BookingProvider } from './context/BookingContext.jsx';
 
@@ -28,6 +32,10 @@ function App() {
                 <Route path="/auth" element={<AuthPage />} />
                 <Route path="/profile" element={<ProfilePage />} />
                 <Route path="/components" element={<ComponentLibrary />} />
+                <Route path="/test-vehicle-categories" element={<VehicleCategoriesTest />} />
+                <Route path="/test-database" element={<DatabaseTestPage />} />
+                <Route path="/test-map" element={<MapTestPage />} />
+                <Route path="/bidding" element={<BiddingPage />} />
               </Routes>
             </main>
             <Footer />

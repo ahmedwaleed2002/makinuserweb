@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Google Maps API Key Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        #map { height: 400px; width: 100%; background: #f0f0f0; border: 1px solid #ccc; }
+        .log { background: #f9f9f9; padding: 10px; margin: 10px 0; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <h1>Direct Google Maps API Test</h1>
+    <div id="status">Loading...</div>
+    <div id="map"></div>
+    <div id="log" class="log"></div>
+
+    <script>
+        const log = (message) => {
+            console.log(message);
+            document.getElementById('log').innerHTML += message + '<br>';
+        };
+
+        const updateStatus = (message) => {
+            document.getElementById('status').innerHTML = message;
+        };
+
+        // Replace with your actual API key
+        const API_KEY = 'AIzaSyAVfh9gUeEB66efpjLzYfN9YWbTdlsR5FU';
+        
+        log('🚀 Starting direct API test...');
+        log('🔑 API Key: ' + API_KEY.substring(0, 10) + '...');
+
+        function initMap() {
+            log('✅ Google Maps callback executed!');
+            
+            const map = new google.maps.Map(document.getElementById('map'), {
+                center: { lat: 31.5204, lng: 74.3587 },
+                zoom: 15
+            });
+
+            new google.maps.Marker({
+                position: { lat: 31.5204, lng: 74.3587 },
+                map: map,
+                title: 'Lahore, Pakistan'
+            });
+
+            updateStatus('✅ Map loaded successfully!');
+            log('🎉 Map created with marker!');
+        }
+
+        // Load the script
+        const script = document.createElement('script');
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${API_KEY}&callback=initMap`;
+        script.async = true;
+        script.defer = true;
+        
+        script.onload = () => {
+            log('📥 Script loaded successfully');
+        };
+        
+        script.onerror = (error) => {
+            log('❌ Script failed to load: ' + error);
+            updateStatus('❌ Failed to load Google Maps');
+        };
+
+        updateStatus('🔄 Loading Google Maps...');
+        document.head.appendChild(script);
+        
+        // Timeout check
+        setTimeout(() => {
+            if (!window.google) {
+                log('⏰ Timeout: Google Maps not loaded after 10 seconds');
+                updateStatus('❌ Timeout loading Google Maps');
+            }
+        }, 10000);
+    </script>
+</body>
+</html>

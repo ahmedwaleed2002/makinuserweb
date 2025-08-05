@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import BookingCard from '../components/booking/BookingCard';
 import MapComponent from '../components/maps/MapComponent';
 
 const Homepage = () => {
+  const [selectedLocation, setSelectedLocation] = useState(null);
+  
   const mockMarkers = [
     {
       id: '1',
@@ -21,6 +23,11 @@ const Homepage = () => {
     }
   ];
 
+  const handleLocationSelect = (location) => {
+    setSelectedLocation(location);
+    console.log('Selected location:', location);
+  };
+
   return (
     <div className="relative min-h-screen">
       {/* Map Background */}
@@ -29,6 +36,7 @@ const Homepage = () => {
           center={{ lat: 40.7128, lng: -74.0060 }}
           zoom={12}
           markers={mockMarkers}
+          onSelectLocation={handleLocationSelect}
           height="100vh"
           className="w-full"
         />
@@ -52,7 +60,7 @@ const Homepage = () => {
           </div>
 
           {/* Booking Card */}
-          <BookingCard />
+          <BookingCard selectedLocation={selectedLocation} />
 
           {/* Features */}
           <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto px-4">
